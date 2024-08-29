@@ -18,12 +18,18 @@ def create_customer(request):
     
 def sale(request , prod_id):
     selected_prod = Product.objects.get(id=prod_id)
-    new_sale = Sale.objects.create(
-        name= Customer.name,
-        phone= Customer.phone,
-        product = selected_prod
-    )
-    return HttpResponse("new prod with name: {}".format(new_sale.name))
+    if Customer.wallet >= selected_prod.price:
+        new_sale = Sale.objects.create(
+            name= Customer.name,
+            phone= Customer.phone,
+            product = selected_prod
+        )
+        
+        Customer.wallet -= selected_prod.price
+        Customer.wallet.save()
+    else:
+        return HttpResponse("error")
+        return HttpResponse("new prod with name: {}".format(new_sale.name))
     
     
 # Create your views here.
